@@ -26,5 +26,7 @@ class Talker(Node):
         finally:
             talker.destroy_node()
             rclpy.shutdown() #tells ros that this process no longer needs to connect to ros
+    if __name__ == '__main__':
+            main()
         
 

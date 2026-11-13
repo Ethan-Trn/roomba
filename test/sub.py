@@ -3,28 +3,24 @@ from rclpy.node import Node #node is a base class
 from std_msgs.msg import Int32 #the message type we're sending 
 
 #inherits from node
-class Talker(Node):
+class listener(Node):
     def __init__(self):
-        super().__init__('talker') #creates a node called talker, node do method
-        self.pub = self.create_publisher(Int32, 'first message', 10) #creates the publisher
-        self.message_id = 0 #each message should have an id 
-        self.timer = self.create_timer(.5,self.alert) #everytime this 
-
-    def alert(self):
-        msg = Int32()
-        msg.data = f'this is number {self.message_id} sent'
-        self.pub.publish(msg)
-        self.message_id += 1
+        super().__init__('listener') #creates a node called listener, node do method
+        self.listen = self.create_subscription(Int32,'mf'.alert(),10)
+       
+    def alert(self,msg):
+        self.get_logger().info('i see message {msg}')
+        
 
     def main(args = None):
         rclpy.init(args = args) #tells code that this is realted to all things ros
-        talker = Talker()
+        listener = listener()
         try:
-            rclpy.spin(Talker)
+            rclpy.spin(listener)
         except KeyboardInterrupt:
             pass
         finally:
-            talker.destroy_node()
+            listener.destroy_node()
             rclpy.shutdown() #tells ros that this process no longer needs to connect to ros
         
 

@@ -12,7 +12,7 @@ class Talker(Node):
 
     def alert(self):
         msg = Int32()
-        msg.data = f'this is number {self.message_id} sent'
+        msg.data = self.message_id
         self.pub.publish(msg)
         self.message_id += 1
 
@@ -20,7 +20,7 @@ class Talker(Node):
         rclpy.init(args = args) #tells code that this is realted to all things ros
         talker = Talker()
         try:
-            rclpy.spin(Talker)
+            rclpy.spin(talker)
         except KeyboardInterrupt:
             pass
         finally:

@@ -9,7 +9,7 @@ class listener(Node):
         self.listen = self.create_subscription(Int32,'mf',self.alert,10)
        
     def alert(self,msg):
-        self.get_logger().info('i see message {msg}')
+        self.get_logger().info(f'i see message {msg.data}')
         
 
 def main(args = None):
@@ -22,8 +22,7 @@ def main(args = None):
     finally:
         listen.destroy_node()
         rclpy.shutdown() #tells ros that this process no longer needs to connect to ros
-    if __name__ == '__main__':
-        main()
 
-        
 
+if __name__ == '__main__':
+    main()

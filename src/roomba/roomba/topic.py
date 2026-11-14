@@ -16,17 +16,17 @@ class Talker(Node):
         self.pub.publish(msg)
         self.message_id += 1
 
-    def main(args = None):
-        rclpy.init(args = args) #tells code that this is realted to all things ros
-        talker = Talker()
-        try:
-            rclpy.spin(talker)
-        except KeyboardInterrupt:
-            pass
-        finally:
-            talker.destroy_node()
-            rclpy.shutdown() #tells ros that this process no longer needs to connect to ros
-    if __name__ == '__main__':
-            main()
-        
+def main(args = None):
+    rclpy.init(args = args) #tells code that this is realted to all things ros
+    talker = Talker()
+    try:
+        rclpy.spin(talker)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        talker.destroy_node()
+        rclpy.shutdown() #tells ros that this process no longer needs to connect to ros
 
+
+if __name__ == '__main__':
+    main()

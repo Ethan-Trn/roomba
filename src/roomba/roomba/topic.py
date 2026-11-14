@@ -17,7 +17,7 @@ class Talker(Node):
         self.message_id += 1
 
 def main(args = None):
-    rclpy.init(args = args) #tells code that this is realted to all things ros
+    rclpy.init(args=args, domain_id=67) #tells code that this is realted to all things ros
     talker = Talker()
     try:
         rclpy.spin(talker)

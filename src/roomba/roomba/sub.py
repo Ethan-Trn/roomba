@@ -13,7 +13,7 @@ class listener(Node):
         
 
 def main(args = None):
-    rclpy.init(args = args) #tells code that this is realted to all things ros
+    rclpy.init(args=args, domain_id=67) #tells code that this is realted to all things ros
     listen = listener()
     try:
         rclpy.spin(listen)

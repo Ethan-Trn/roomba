@@ -1,4 +1,4 @@
-# HELPME: how to build and run roomba
+# HELPME: how to build and run room
 
 ## Run it (do this every time)
 
@@ -6,7 +6,7 @@
 cd ~/Downloads/roomba                  # workspace root (the folder containing src/)
 source /opt/ros/lyrical/setup.bash     # teach this terminal about ROS
 colcon build --packages-select roomba  # copy src/ into install/ (redo after code changes)
-source install/setup.bash              # teach this terminal about my package
+source install/setup.bash              # teach this terminal about my package like all laptop and pi stuff
 ```
 
 Then, in two terminals (each needs both `source` lines):

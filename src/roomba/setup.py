@@ -12,7 +12,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
     ],
     package_data={'': ['py.typed']},
-    install_requires=['setuptools'],
+    install_requires=['setuptools', 'pyserial'],
     zip_safe=True,
     maintainer='Ethan',
     maintainer_email='ethantran1001@gmail.com',
@@ -27,6 +27,7 @@ setup(
         'console_scripts': [
             'laptop = roomba.topic:main',
             'pi = roomba.sub:main',
+            'lidar = roomba.lidar_node:main',
         ],
     },
 )

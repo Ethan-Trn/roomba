@@ -48,3 +48,32 @@ main() -> Talker() -> super().__init__('talker')
 - `package 'roomba' not found` -> forgot `source install/setup.bash`, or never ran `colcon build`
 - code change not showing up -> rebuild with `colcon build` (or use `colcon build --symlink-install` once so Python edits apply without rebuilding)
 - `colcon build` says no packages -> you're not in the workspace root
+
+## The lidar code (what each file does)
+
+| File | What it does |
+|---|---|
+| `ld06.py` | turns the lidar's raw bytes into distances and angles: finds each packet, checks it wasn't corrupted, reads the measurements, gathers a full circle. Knows nothing about ROS or wires |
+| `sources.py` | provides the bytes. UART version reads the Pi's pins, USB version reads the USB adapter, simulated version makes up a room so you can test without the sensor |
+| `lidar_node.py` | the program you run on the Pi. Takes bytes from `sources.py`, passes them through `ld06.py`, publishes each finished circle as `/scan` |
+| `test/test_ld06.py` | checks `ld06.py` works without needing the sensor |
+| `setup.py`, `package.xml` | tell ROS the `lidar` command exists and what it needs installed |
+| `CLAUDE.md` | notes on project layout and Pi setup |
+
+```
+sources.py -> ld06.py -> lidar_node.py -> laptop (RViz)
+(get bytes)   (decode)   (send to ROS)    (draw it)
+```
+
+## Run the lidar
+
+```bash
+ros2 run roomba lidar --ros-args -p source:=sim     # fake room, no sensor needed
+ros2 run roomba lidar --ros-args -p source:=uart    # real sensor on the Pi's GPIO pins
+ros2 run roomba lidar --ros-args -p source:=usb     # real sensor on the USB adapter
+```
+
+On the laptop: run `rviz2`, set Fixed Frame to `lidar`, add a LaserScan display on `/scan`.
+The node logs `scans/s` and `bad_crc` every 5 seconds. `bad_crc` near 0 means it is working.
+
+Run the tests (no ROS or sensor needed): `python3 -m pytest src/roomba/test/test_ld06.py`

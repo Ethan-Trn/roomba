@@ -117,8 +117,6 @@ class Roomba:
             self.stop_moving()
 
     def drive_direct(self, left, right, duration=0):
-        """Wheel speeds in mm/s (-500..500). duration s: 0 = keep driving,
-        otherwise drive for that long then stop."""
         lf, rt = _clamp(left, -500, 500), _clamp(right, -500, 500)
         self._send(145, struct.pack('>hh', rt, lf))   # OI wants right first
         if duration:

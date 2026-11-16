@@ -8,12 +8,16 @@ ROS 2 (distro `lyrical`) colcon workspace. Package: `src/roomba` (ament_python).
 - **Laptop** subscribes and does the heavy work (RViz now, mapping later).
 - Both use `domain_id=67` (set in code via `rclpy.init(domain_id=67)`). Keep them the same.
 
+## Roomba OI
+
+- `roomba/oi/roomba.py`: `Roomba` class, one method per Open Interface command (serial inside). Tests: `src/roomba/test/test_roomba.py`.
+
 ## LD06 lidar
 
-- `roomba/ld06.py`: protocol only (CRC-8, packet decode, resync parser, scan assembler). No ROS, no serial.
-- `roomba/sources.py`: `LidarSource` base class (`open`/`read`/`close`). `UartSource`, `UsbSource`
+- `roomba/lidar/ld06.py`: protocol only (CRC-8, packet decode, resync parser, scan assembler). No ROS, no serial.
+- `roomba/lidar/sources.py`: `LidarSource` base class (`open`/`read`/`close`). `UartSource`, `UsbSource`
   (via `SerialSource`) and `SimulatedSource` override how bytes arrive. Add new transports here.
-- `roomba/lidar_node.py`: node `ld06`, publishes `sensor_msgs/LaserScan` on `/scan`, frame `lidar`.
+- `roomba/lidar/lidar_node.py`: node `ld06`, publishes `sensor_msgs/LaserScan` on `/scan`, frame `lidar`.
 - Run: `ros2 run roomba lidar --ros-args -p source:=uart|usb|sim [-p port:=/dev/ttyUSB0]`
 - Protocol: 230400 8N1, 47-byte packets (`0x54 0x2C` ... crc8), 12 points each, angles in 0.01 deg,
   CRC-8 poly 0x4D init 0 over bytes 0..45. Sensor angles are clockwise; ROS output is counter-clockwise.

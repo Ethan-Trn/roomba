@@ -8,7 +8,7 @@ import math
 import time
 from abc import ABC, abstractmethod
 
-from roomba import ld06
+from roomba.lidar import ld06
 
 
 class LidarSource(ABC):

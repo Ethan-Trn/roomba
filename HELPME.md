@@ -73,7 +73,60 @@ ros2 run roomba lidar --ros-args -p source:=uart    # real sensor on the Pi's GP
 ros2 run roomba lidar --ros-args -p source:=usb     # real sensor on the USB adapter
 ```
 
-On the laptop: run `rviz2`, set Fixed Frame to `lidar`, add a LaserScan display on `/scan`.
-The node logs `scans/s` and `bad_crc` every 5 seconds. `bad_crc` near 0 means it is working.
+The node logs `scans/s` and `bad_crc` every 5 seconds. `scans/s` should be near 10 and
+`bad_crc` near 0. That log line is only for debugging, it does not change what gets published.
 
-Run the tests (no ROS or sensor needed): `python3 -m pytest src/roomba/test/test_ld06.py`
+Run the tests (no ROS or sensor needed, run from `src/roomba`): `python3 -m pytest test/test_ld06.py`
+
+## See it in RViz (laptop)
+
+Terminal 1, start the node (use `sim` until the sensor is wired):
+
+```bash
+cd ~/Downloads/roomba
+source /opt/ros/lyrical/setup.bash
+source install/setup.bash
+ros2 run roomba lidar --ros-args -p source:=sim
+```
+
+Terminal 2, open RViz on the same domain as the node (67):
+
+```bash
+source /opt/ros/lyrical/setup.bash
+ROS_DOMAIN_ID=67 rviz2
+```
+
+In the RViz window:
+
+1. Global Options -> **Fixed Frame** = `lidar` (must match the node's `body_frame` parameter)
+2. **Add** -> By display type -> **LaserScan**
+3. LaserScan -> **Topic** = `/scan`
+4. Size (m) about `0.03`, Style = `Points` or `Spheres`. If nothing shows, set Reliability Policy to `Reliable`
+
+You should see a ring of dots shaped like a rectangle room with a small pillar (the sim).
+
+If nothing shows: Fixed Frame is not `lidar`, RViz was started without `ROS_DOMAIN_ID=67`, or the node is not running.
+
+## How the lidar data flows
+
+```
+lidar --packets--> Pi (parser, assembler) --LaserScan--> laptop (RViz)
+      47 bytes                             ~450 distances
+      12 points                            one full circle
+      ~375 per second                      ~10 per second
+```
+
+- A **packet** is the lidar's own format: 12 points, a start angle, an end angle and a CRC. Only exists between lidar and Pi.
+- The 12 point angles are spaced evenly between start and end angle. Each packet covers ~9.6 degrees.
+- **CRC** is a check number at the end of every packet. If it does not match, the packet is corrupted and dropped.
+- The **assembler** collects points until the angle wraps past 360, then returns one full turn. It returns `None` while the turn is still in progress.
+- Every point of the turn is published in `ranges` (no bins). RViz works out each angle as `angle_min + i * angle_increment`. A point with no echo is `inf` so the spacing stays even.
+- Sensor angles go clockwise, ROS wants counter-clockwise, so the code flips them (`360 - angle`).
+
+## Functions in `lidar_node.py`
+
+| Function | What it does |
+|---|---|
+| `_alert` | timer callback, runs every 5 ms. Reads bytes, finds packets, adds them to the turn, publishes when a turn is done |
+| `_publish` | fills in a `LaserScan` message and sends it on `/scan` |
+| `_update` | prints the status line every 5 seconds (debugging only) |

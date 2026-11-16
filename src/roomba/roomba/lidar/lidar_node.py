@@ -8,8 +8,8 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import LaserScan
 
-from roomba.ld06 import PacketParser, ScanAssembler
-from roomba.sources import SimulatedSource, UartSource, UsbSource
+from roomba.lidar.ld06 import PacketParser, ScanAssembler
+from roomba.lidar.sources import SimulatedSource, UartSource, UsbSource
 
 DOMAIN_ID = 67  # must match the laptop
 SOURCES = {'uart': UartSource, 'usb': UsbSource}

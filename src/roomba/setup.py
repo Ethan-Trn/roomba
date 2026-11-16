@@ -27,7 +27,7 @@ setup(
         'console_scripts': [
             'laptop = roomba.topic:main',
             'pi = roomba.sub:main',
-            'lidar = roomba.lidar_node:main',
+            'lidar = roomba.lidar.lidar_node:main',
         ],
     },
 )

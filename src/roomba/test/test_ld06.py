@@ -1,7 +1,7 @@
 import math
 
-from roomba import ld06
-from roomba.sources import SimulatedSource
+from roomba.lidar import ld06
+from roomba.lidar.sources import SimulatedSource
 
 
 def _packet(start=10.0, dist=1000):

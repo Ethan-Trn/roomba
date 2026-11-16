@@ -51,6 +51,17 @@ with Roomba('/dev/ttyUSB0') as r:
     r.stop_moving()
 ```
 
+## Run it on the Pi
+
+`run_roomba.py` is a demo script. It drives forward 1 s, lights some LEDs, prints a cliff sensor and the bumpers, then beeps. It uses port `/dev/ttyUSB0`, so edit the first line of the script if yours differs (find it with `ls /dev/serial/by-id/`).
+
+```
+cd ~/roomba/src/roomba
+python3 -m roomba.oi.run_roomba
+```
+
+Press the **Clean** button on the Roomba when it prints `Waiting for Roomba... press Clean`. The robot drives, so put it on the floor with some room, or lift its wheels off the ground.
+
 ## Methods
 
 | Group | Methods |

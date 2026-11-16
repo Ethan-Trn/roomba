@@ -104,18 +104,26 @@ class Roomba:
         self._send(143)
 
     #driving
-    def drive(self, velocity, radius=STRAIGHT):
+    def drive(self, velocity, radius=STRAIGHT, duration=0):
         """velocity mm/s (-500..500); radius mm (-2000..2000), STRAIGHT,
-        TURN_CW or TURN_CCW."""
+        TURN_CW or TURN_CCW. duration s: 0 = keep driving, otherwise drive
+        for that long then stop."""
         v = _clamp(velocity, -500, 500)
         if radius not in (STRAIGHT, TURN_CW, TURN_CCW):
             radius = _clamp(radius, -2000, 2000)
         self._send(137, struct.pack('>HH', v & 0xFFFF, radius & 0xFFFF))
+        if duration:
+            time.sleep(duration)
+            self.stop_moving()
 
-    def drive_direct(self, left, right):
-        """Wheel speeds in mm/s (-500..500)."""
+    def drive_direct(self, left, right, duration=0):
+        """Wheel speeds in mm/s (-500..500). duration s: 0 = keep driving,
+        otherwise drive for that long then stop."""
         lf, rt = _clamp(left, -500, 500), _clamp(right, -500, 500)
         self._send(145, struct.pack('>hh', rt, lf))   # OI wants right first
+        if duration:
+            time.sleep(duration)
+            self.stop_moving()
 
     def stop_moving(self):
         self.drive_direct(0, 0)

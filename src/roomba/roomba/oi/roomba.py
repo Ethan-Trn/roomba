@@ -1,16 +1,7 @@
-"""Roomba 600 Open Interface. Call a method; the serial bytes are handled here.
-
-    r = Roomba('/dev/ttyUSB0')
-    r.open()                  # opens port, waits for the Roomba to wake up
-    r.safe()
-    r.drive_direct(200, 200)  # left, right in mm/s
-    time.sleep(1)
-    r.stop_moving()
-    print(r.sensor('voltage'))
-    r.close()
-"""
+"""Roomba 600 Open Interface. Call a method; the serial bytes are handled here."""
 import struct
 import time
+import serial
 
 STRAIGHT = 32768   # drive() radius: straight
 TURN_CW = -1       # drive() radius: spin clockwise
@@ -44,7 +35,7 @@ class Roomba:
     #connection
     def open(self, wait=True):
         if self.s is None:
-            import serial
+            
             self.s = serial.Serial(self.port, self.baud, timeout=0.2)
         if wait:
             self.wait_for_roomba()
@@ -79,7 +70,7 @@ class Roomba:
             if self.s.read(1):                # any reply = it's awake and listening
                 print("Roomba is awake")
                 return
-            time.sleep(0.5)
+            time.sleep(0.2)
 
     #modes
     def start(self):

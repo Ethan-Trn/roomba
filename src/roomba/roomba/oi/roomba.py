@@ -123,6 +123,15 @@ class Roomba:
             time.sleep(duration)
             self.stop_moving()
 
+    def drive_pwm(self, left, right, duration=0):
+        """Wheel motor PWM (-255..255). duration s: 0 = keep driving,
+        otherwise drive for that long then stop."""
+        lf, rt = _clamp(left, -255, 255), _clamp(right, -255, 255)
+        self._send(146, struct.pack('>hh', rt, lf))   # OI wants right first
+        if duration:
+            time.sleep(duration)
+            self.stop_moving()
+
     def stop_moving(self):
         self.drive_direct(0, 0)
 
@@ -162,6 +171,10 @@ class Roomba:
         if len(data) != size:
             raise TimeoutError(f'no reply for {name}')
         return int.from_bytes(data, 'big', signed=signed)
+
+    def encoders(self):
+        """(left, right) raw wheel encoder counts, 16-bit, wrap at 65535."""
+        return self.sensor('left_encoder'), self.sensor('right_encoder')
 
     def bumpers(self):
         b = self.sensor('bumps_wheeldrops')

@@ -3,6 +3,8 @@
 `roomba.py` has a `Roomba` class for the Roomba 600 Open Interface. You call a method
 and it does the serial bytes for you. It has no ROS in it.
 
+Code based on: https://cdn.hackaday.io/files/1835247851890816/2021-04-13_iRobot_Roomba_600_Open_Interface_Spec-3.pdf
+
 ## Setup
 
 - Plug the Roomba's serial cable into the Pi or laptop. The port is usually `/dev/ttyUSB0`.
